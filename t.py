@@ -1,4 +1,4 @@
-#coding=utf-8
+# coding:utf-8
 
 from flask import Flask
 import requests
@@ -7,80 +7,83 @@ import sys
 import time
 import getpass
 
-USERNAME = "" 
-PASSWORD = ""
+URL = "http://kuas.grd.idv.tw:14768/"   # API URL
 
-s = "" # session
 
-URL = "http://kuas.grd.idv.tw:14768/" #API URL
+def setData(user):
 
-def setData():
-    global USERNAME,PASSWORD
-    USERNAME = raw_input("Enter Your Account:")
-    PASSWORD = getpass.getpass("Enter Your Password:")
+    user['username'] = raw_input("Enter Your Account:")
+    user['password'] = getpass.getpass("Enter Your Password:")
 
-    k = list()
-    ltime = time.localtime(time.time())
-    k.append(int(USERNAME[1:4])) # Set First Year
-    k.append(ltime.tm_year-1912) # Set Last Year so far
-    
-    if (ltime.tm_mon <= 7 ): # Set Semester Every Year
-        k.append(1)
+    local_time = time.localtime(time.time())
+
+    user['start_year'] = int(user['username'][1:4])  # Set First Year
+    user['end_year'] = local_time.tm_year-1912       # Set Last Year so far
+
+    if (local_time.tm_mon <= 7):                    # Set Semester Every Year
+        user['semester'] = 1
     else:
-        k.append(2)
-    
-    return k
+        user['semester'] = 2
 
 
-def login():
-    global s
-    s = requests.session()
-    
+def login(session, user):
+
     try:
-        r = s.get(URL)
+        r = session.get(URL)
     except Exception as e:
-        return 
+        return
 
     try:
-        r = s.post(URL + "ap/login", data={"username": USERNAME,"password": PASSWORD})
-        if(not r.text.startswith("true")):
-            if(USERNAME != ""):print('Username or Password was wrong')
-            return 0
-        else:
-            return 1
-
+        r = session.post(
+                URL + "ap/login",
+                data={"username": user['username'],
+                      "password": user['password']})
+        return r.text
     except Exception as e:
         return
 
 
-def querys( tmp ):
-    global s
-    k = list()
+def querys(session, user):
+
+    tmp_data = []
     try:
-        for i in range(tmp[0],tmp[1]+1):
-            m = 2 if(i != tmp[1]) else tmp[2] # Set Query Semester Range
-            
-            for j in range(1,m+1):
-                r = s.post(URL + "ap/query", data = {"arg01": str(i) ,"arg02": str(j) ,"arg03": USERNAME,"fncid":"ag008"})
-        
+        for index_year in range(user['start_year'], user['end_year']+1):
+
+            # Set Query Semester Range
+            m = 2 if(index_year != user['end_year'])else user['semester']
+            for index_semester in range(1, m+1):
+                r = session.post(
+                        URL + "ap/query",
+                        data={"arg01": str(index_year),
+                              "arg02": str(index_semester),
+                              "arg03": user['username'],
+                              "fncid": "ag008"})
+
                 data = json.loads(r.text)
                 for d in data[0]:
-                    if( (u'通識' in d['course_name']) and (float(d['final_score']) >= 60.0)):
-                        k.append(d['course_name'])
-  
-        return k    
+                    if(u"通識" in d['course_name'] and
+                       float(d['final_score']) >= 60.0):
+                        tmp_data.append(d['course_name'])
+
+        return tmp_data
     except Exception as e:
-        print(' Query Error !')
         print(e)
         return
 
 
 if __name__ == "__main__":
 
-    year = list() # Store Year And Semester
+    user = {'username': None, 'password': None,
+            'start_year': None, 'end_year': None, 'semester': None}
+    session = requests.session()
 
-    while(login() != 1):
-        year = setData()
-    
-    for i in querys(year):
+    for x in range(0, 3):
+        setData(user)
+        if login(session, user).startswith("true"):
+            break
+        print("The username or password was wrong, try it again.")
+    else:
+        print("You has enter 3 times wrong password. Bye!")
+
+    for i in querys(session, user):
         print(i)
