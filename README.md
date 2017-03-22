@@ -4,32 +4,26 @@
 使用前請先安裝以下套件
 ```shell=
 pip install requests
-pip install beautifulsoup4
+pip install Flask
 ```
 請使用 Python 3 運行
 ### Linux
 ```shell=
-python general.py
+python t.py
 ```
-### Windows
-```shell=
-python ms_general.py
-```
+
+
 ### Example
 ```
-user:1104108142
-Password:
-start year:104
-end year:105
-核心通識(一)-人文思潮與名著導讀
-延伸通識(人文)-台灣古蹟與歷史
-延伸通識(社會)-先哲管理思維
-核心通識(三)-現今科技議題
-延伸通識(社會)-南台灣企業文化
-
+Enter Your Account:1104137127
+Enter Your Password:
+核心通識(二)-社會學與當代社會
+核心通識(四)-台灣社會與文化
 ```
-查詢從 104 學年度 ~ 105 學年度 所有上過的通識
-## More things...
-不限於查通識喔~
-也可以統計學分...
-歡迎 Pull requests
+
+### More things
+I send pull request first, so there are some common files in this branch. That's sorry.
+This script can auto count general education subject what you learned and pass it.
+And you wouldn't enter semester, the script can identify it automatically
+If you have any questions , plz let me know. Send me a e-mail: **c75a90@gmail.com**
+Welcome to send Pull requests
