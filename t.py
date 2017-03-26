@@ -1,13 +1,12 @@
 # coding:utf-8
 
-from flask import Flask
 import requests
 import json
-import sys
 import time
 import getpass
+from requests.auth import HTTPBasicAuth
 
-URL = "http://kuas.grd.idv.tw:14768/"   # API URL
+URL = "https://kuas.grd.idv.tw:14769/v2/"   # API URL
 
 
 def setData(user):
@@ -29,16 +28,10 @@ def setData(user):
 def login(session, user):
 
     try:
-        r = session.get(URL)
-    except Exception as e:
-        return
+        r = session.get(URL+'token')
+        tmp = json.loads(r.text)
 
-    try:
-        r = session.post(
-                URL + "ap/login",
-                data={"username": user['username'],
-                      "password": user['password']})
-        return r.text
+        return tmp['auth_token']
     except Exception as e:
         return
 
@@ -52,18 +45,14 @@ def querys(session, user):
             # Set Query Semester Range
             m = 2 if(index_year != user['end_year'])else user['semester']
             for index_semester in range(1, m+1):
-                r = session.post(
-                        URL + "ap/query",
-                        data={"arg01": str(index_year),
-                              "arg02": str(index_semester),
-                              "arg03": user['username'],
-                              "fncid": "ag008"})
+                r = session.get(URL + "ap/users/scores/%d/%d"\
+                                % (index_year, index_semester))
 
                 data = json.loads(r.text)
-                for d in data[0]:
-                    if(u"通識" in d['course_name'] and
+                for d in data['scores']['scores']:
+                    if(u"通識" in d['title'] and
                        float(d['final_score']) >= 60.0):
-                        tmp_data.append(d['course_name'])
+                        tmp_data.append(d['title'])
 
         return tmp_data
     except Exception as e:
@@ -79,7 +68,9 @@ if __name__ == "__main__":
 
     for x in range(0, 3):
         setData(user)
-        if login(session, user).startswith("true"):
+        session.auth = (user['username'], user['password'])
+
+        if login(session, user) is not None:
             break
         print("The username or password was wrong, try it again.")
     else:
