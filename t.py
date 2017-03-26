@@ -45,7 +45,7 @@ def querys(session, user):
             # Set Query Semester Range
             m = 2 if(index_year != user['end_year'])else user['semester']
             for index_semester in range(1, m+1):
-                r = session.get(URL + "ap/users/scores/%d/%d"\
+                r = session.get(URL + "ap/users/scores/%d/%d"
                                 % (index_year, index_semester))
 
                 data = json.loads(r.text)
