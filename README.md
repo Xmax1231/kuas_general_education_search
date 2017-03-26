@@ -1,7 +1,7 @@
 # How To Use 
 ### Requirements
 ```shell=
-pip install request
+pip install requests
 ```
 
 ### Run
