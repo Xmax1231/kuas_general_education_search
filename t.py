@@ -10,8 +10,10 @@ URL = "https://kuas.grd.idv.tw:14769/v2/"   # API URL
 
 
 def setData(user):
-
-    user['username'] = raw_input("Enter Your Account:")
+    try:
+        user['username'] = raw_input("Enter Your Account:")
+    except:
+        user['username'] = input("Enter Your Account:")
     user['password'] = getpass.getpass("Enter Your Password:")
 
     local_time = time.localtime(time.time())
