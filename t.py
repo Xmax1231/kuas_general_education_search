@@ -52,9 +52,12 @@ def querys(session, user):
 
                 data = json.loads(r.text)
                 for d in data['scores']['scores']:
-                    if(u"通識" in d['title'] and
-                       float(d['final_score']) >= 60.0):
-                        tmp_data.append(d['title'])
+                    try:
+                        if(u"通識" in d['title'] and
+                        float(d['final_score']) >= 60.0):
+                            tmp_data.append(d['title'])
+                    except ValueError:  # float cannot convert null string
+                        pass
 
         return tmp_data
     except Exception as e:
