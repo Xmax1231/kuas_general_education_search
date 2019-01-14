@@ -12,7 +12,7 @@ URL = "https://kuas.grd.idv.tw:14769/v2/"   # API URL
 def setData(user):
     try:
         user['username'] = raw_input("Enter Your Account:")
-    except NameError:
+    except:
         user['username'] = input("Enter Your Account:")
     user['password'] = getpass.getpass("Enter Your Password:")
 
@@ -45,7 +45,7 @@ def querys(session, user):
         for index_year in range(user['start_year'], user['end_year']+1):
 
             # Set Query Semester Range
-            m = 2 if (index_year != user['end_year']) else user['semester']
+            m = 2 if(index_year != user['end_year'])else user['semester']
             for index_semester in range(1, m+1):
                 r = session.get(URL + "ap/users/scores/%d/%d"
                                 % (index_year, index_semester))
