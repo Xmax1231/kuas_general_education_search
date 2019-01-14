@@ -52,7 +52,8 @@ def querys(session, user):
 
                 data = json.loads(r.text)
                 for d in data['scores']['scores']:
-                    if '通識' in d['title'] and d['final_score'] != '' and float(d['final_score']) >= 60.0:
+                    if ('通識' in d['title'] and d['final_score'] != '' and
+                            float(d['final_score']) >= 60.0):
                         tmp_data.append(d['title'])
 
         return tmp_data
