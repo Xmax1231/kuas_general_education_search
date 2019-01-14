@@ -53,8 +53,8 @@ def querys(session, user):
                 data = json.loads(r.text)
                 for d in data['scores']['scores']:
                     try:
-                        if(u"通識" in d['title'] and
-                        float(d['final_score']) >= 60.0):
+                        if ('通識' in d['title'] and
+                                float(d['final_score']) >= 60.0):
                             tmp_data.append(d['title'])
                     except ValueError:  # float cannot convert null string
                         pass
