@@ -45,7 +45,7 @@ def querys(session, user):
         for index_year in range(user['start_year'], user['end_year']+1):
 
             # Set Query Semester Range
-            m = 2 if(index_year != user['end_year'])else user['semester']
+            m = 2 if index_year != user['end_year'] else user['semester']
             for index_semester in range(1, m+1):
                 r = session.get(URL + "ap/users/scores/%d/%d"
                                 % (index_year, index_semester))
