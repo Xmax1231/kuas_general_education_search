@@ -1,5 +1,5 @@
 # coding:utf-8
-
+import sys
 import requests
 import json
 import time
@@ -10,9 +10,9 @@ URL = "https://kuas.grd.idv.tw:14769/v2/"   # API URL
 
 
 def setData(user):
-    try:
+    if sys.version_info.major == 2:
         user['username'] = raw_input("Enter Your Account:")
-    except:
+    elif sys.version_info.major == 3:
         user['username'] = input("Enter Your Account:")
     user['password'] = getpass.getpass("Enter Your Password:")
 
